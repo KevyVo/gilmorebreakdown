@@ -1,44 +1,16 @@
 import { fetchGoogleSheetsData } from 'google-sheets-mapper';
 import Selector from './Selector';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-export default function Form() {
-    const [data, setData] = useState({})
+export default function Form({setData, setSubmitted}) {
     const [tower, setTower] = useState();
-    const [textBoxValue, setTextBoxValue] = useState("");
-    const [submitted, setSubmitted] = useState(false);
+    const [usersStrata, setUsersStrata] = useState("");
   
-
-    // useEffect(() => {
-    //     const getData = async () => {
-    //         try {
-    //           return await fetchGoogleSheetsData({
-    //             apiKey: import.meta.env.VITE_GoogleSheetAPIKEY,
-    //             sheetId: import.meta.env.VITE_GoogleSheetID,
-    //             sheetsOptions: [{ id: tower }], // Ensure sheetsOptions is not null
-    //           });
-    //         } catch (error) {
-    //           console.error(error);
-    //         }
-    //     };
-
-    //     if(tower){
-    //         getData()
-    //         .then(data => {
-    //             setData(data)
-    //         })
-    //     }
-
-    // }, [tower]);
-  
-
-  
-    console.log("data", data);
   
     const handleInputChange = (e) => {
       const value = e.target.value;
       if (/^\d*\.?\d*$/.test(value)) { // Allow only numbers and a single decimal point
-        setTextBoxValue(value);
+        setUsersStrata(value);
       }
     };
 
@@ -47,7 +19,7 @@ export default function Form() {
           return await fetchGoogleSheetsData({
             apiKey: import.meta.env.VITE_GoogleSheetAPIKEY,
             sheetId: import.meta.env.VITE_GoogleSheetID,
-            sheetsOptions: [{ id: tower }], // Ensure sheetsOptions is not null
+            sheetsOptions: [{ id: tower }],
           });
         } catch (error) {
           console.error(error);
@@ -55,7 +27,6 @@ export default function Form() {
     };
   
     const handleSubmit = () => {
-
         if(tower){
             getData(tower)
             .then(data => {
@@ -70,29 +41,19 @@ export default function Form() {
       <div>
         <Selector tower={tower} setTower={setTower}></Selector>
   
-        <p>This is the building: {tower}</p>
-  
         <input 
           type="text" 
-          value={textBoxValue} 
+          value={usersStrata} 
           onChange={handleInputChange} 
           placeholder="Enter text here"
         />
-        <p>TextBox Value: {textBoxValue}</p>
   
         <button 
           onClick={handleSubmit} 
-          disabled={!textBoxValue || !tower}
+          disabled={!usersStrata || !tower}
         >
           Submit
         </button>
-  
-        {submitted && data &&(
-          <div>
-            <h2>Google Sheets Data:</h2>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
-          </div>
-        )}
       </div>
     );
   }
